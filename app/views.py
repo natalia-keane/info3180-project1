@@ -5,6 +5,8 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
+
+import datetime
 from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required
@@ -31,6 +33,16 @@ def secure_page():
 def about():
     """Render the website's about page."""
     return render_template('about.html')
+    
+@app.route('/profile')
+def profile():
+    """Render website's profile page."""
+    jdate=datetime.date(2017, 9, 10)
+    return render_template('profile.html', date=format_date_joined(jdate))
+
+def format_date_joined(jdate):
+    
+    return  jdate.strftime("%B, %Y")
 
 
 @app.route("/login", methods=["GET", "POST"])

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="main">
+
+
+<div id="tops">
+  <img src="{{ url_for('static', filename='NK.jpeg') }}" class="center">
+<h1>Natalia Keane
+</h1>
+    <p>
+    @natalia-keane</br>
+    Kingston, Jamaica</br>
+    Joined {{date}}
+
+
+</div>
+
+<div id="bots">
+<p> Computer Science Major, Japanese Minor.</br>
+   Loves Korean, Italian, Japanese, Spanish languages.</br>
+  Watches a lot of kdramas.</p>
+<div id="goals"><div class="pts">50 </br> Posts</div><div class="foln">150</br> Following</div><div class="folw">400</br> Followers</div></div>
+<button type="button"> Follow</button>
+
+</div>
+</div>
+{% endblock %}
