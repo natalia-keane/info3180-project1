@@ -1,27 +1,57 @@
 {% extends "base.html" %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/styles.css')}}"
+
+{% endblock %}
+
 {% block main %}
-<div class="main">
-
-
-<div id="tops">
-  <img src="{{ url_for('static', filename='NK.jpeg') }}" class="center">
-<h1>Natalia Keane
-</h1>
-    <p>
-    @natalia-keane</br>
-    Kingston, Jamaica</br>
-    Joined {{date}}
-
-
-</div>
-
-<div id="bots">
-<p> Computer Science Major, Japanese Minor.</br>
-   Loves Korean, Italian, Japanese, Spanish languages.</br>
-  Watches a lot of kdramas.</p>
-<div id="goals"><div class="pts">50 </br> Posts</div><div class="foln">150</br> Following</div><div class="folw">400</br> Followers</div></div>
-<button type="button"> Follow</button>
-
-</div>
-</div>
+  <h1> Add Profile</h1>
+  {% include 'flash_messages.html' %}
+  <hr class="top"/>
+  <form action="{{ url_for('profile') }}" method="post" enctype="multipart/form-data">
+    {% include 'flash_messages.html' %}
+    {{ form.csrf_token }}
+    <div class="form_group">
+        {{ form.fname.label }} </br>
+        {{ form.fname(size = 40)}}
+    </div>
+    </br>
+    <div class="form_group">
+        {{ form.lname.label }}  </br>
+        {{ form.lname(size = 40)}}
+    </div>
+    </br>
+    <div class="form_group">
+        {{ form.gender.label }}  </br>
+        {{ form.gender(placeholder="Select Gender")}}
+    </div>
+    </br>
+     <div class="form_group">
+        {{ form.email.label }} </br>
+        <div class="form_input">
+        {{ form.email(size=40, placeholder="E.g. jdoe@example.com") }}
+        </div>
+    </div>
+    </br>
+     <div class="form_group">
+        {{ form.location.label }} </br>
+        {{ form.location(size=40, placeholder="E.g. Kingston, Jamaica") }}
+    </div>
+    </br>
+     <div class="form_group">
+        {{ form.biography.label }}  </br>
+        {{ form.biography(maxlength = 250) }}
+    </div>
+    </br>
+    <div class="form-group">
+        {{ form.upload.label }}
+        {{ form.upload(class="form-control") }}
+    </div>
+    </br>    
+    
+    <button id="btn" type="submit" class="btn btn-primary">Add Profile</button>
+    
+</form>
 {% endblock %}

@@ -1,0 +1,168 @@
+/*styles*/
+#image
+{
+    padding: 15px;
+    float: left;
+    width: 20%;
+    height:180px;
+}
+
+#btn{
+    background-color: green;
+    border-color: green;
+}
+
+#icon{
+    width: 3.5%;
+    height: 3.5%;
+    padding: 5px;
+}
+
+.info{
+    text-align: left;
+    margin-top: 50px;
+    color: lightgrey;
+    font-weight: bold;
+    
+    
+}
+
+body{
+    background-color: lightblue;
+}
+
+span.name{
+    font-weight: bold;
+    color: black;
+}
+
+#view_button{
+    background-color: green;
+    border-color: green;
+    padding: 10px;
+    width: 300px;
+}
+
+.view_btn{
+    float: right;
+    vertical-align: middle;
+    margin-right: 150px;
+    padding: 20px;
+}
+
+
+
+.top{
+color: blue;
+border: solid 2px;
+}
+
+div.profile{
+    padding-bottom: 80px;
+    background-color: white;
+}
+
+
+/*styles2*/
+
+textarea{
+   margin-top: 10px;
+   width: 20.7em;
+   height: 8em;
+   resize: none;
+   border-radius: 5px;
+}
+
+select{
+    margin-top: 10px;
+    width: 330px;
+    border: none; /* <-- This thing here */
+    border:solid 1.5px #ccc;
+    border-radius: 5px;
+    border-color: lightgrey;
+}
+
+input{
+    margin-top: 10px;
+    border: none; /* <-- This thing here */
+    border:solid 1.5px #ccc;
+    border-radius: 5px;
+    border-color: lightgrey;
+    
+}
+
+
+/*styles3*/
+
+#profile_img
+{
+    position: relative;
+    padding: 15px;
+    float: left;
+    width: 45%;
+    height:225px;
+}
+
+#line{
+color: grey;    
+}
+
+
+.info{
+    text-align: left;
+    margin-top: 50px;
+    color: black;
+    font-weight: bold;
+    
+    
+}
+
+body{
+    background-color: lightblue;
+}
+
+
+div.profile{
+    overflow: auto;
+    margin: auto;
+    width: 700px;
+    height: 50%;
+    background-color: white;
+    border-top: solid 4px blue;
+}
+
+.bio{
+    margin-left: 15px;
+    color: grey;
+    
+}
+
+#icon{
+    width: 5%;
+    height: 5%;
+    padding: 5px;
+}
+.button{
+    text-align: center;
+    padding: 15px;
+}
+
+#btn1{
+    background-color: green;
+    font-weight: bold;
+    border-color: green;
+    color: white;
+    border-radius: 10%;
+    margin-left: 50px;
+    width: 150px;
+}
+
+#btn2{
+    background-color: skyblue;
+    border-color: skyblue;
+    font-weight: bold;
+    color: white;
+    border-radius: 10%;
+    margin-left: 50px;
+    width: 150px;
+}

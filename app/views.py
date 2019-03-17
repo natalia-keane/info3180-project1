@@ -4,15 +4,13 @@ Jinja2 Documentation:    http://jinja.pocoo.org/2/documentation/
 Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
-
-
-import datetime
+import os, random, datetime
 from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm
+from app.forms import LoginForm, ContactForm
 from app.models import UserProfile
-from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
 
 ###
 # Routing for your application.
@@ -34,31 +32,118 @@ def about():
     """Render the website's about page."""
     return render_template('about.html')
     
-@app.route('/profile')
-def profile():
-    """Render website's profile page."""
-    jdate=datetime.date(2017, 9, 10)
-    return render_template('profile.html', date=format_date_joined(jdate))
-
-def format_date_joined(jdate):
     
-    return  jdate.strftime("%B, %Y")
+@app.route('/profile/', methods=["GET", "POST"])
+def profile():
+    myform= ContactForm()
+    
+    if request.method == 'POST':
+        if myform.validate_on_submit():
+            fname= myform.fname.data
+            lname= myform.lname.data
+            gender= myform.gender.data
+            email= myform.email.data
+            location= myform.location.data
+            biography= myform.biography.data
+            upload= myform.upload.data
+            
+            filename= secure_filename(upload.filename)
+            upload.save(os.path.join(
+                app.config['UPLOAD_FOLDER'], filename
+                ))
+            
+            profile_date = datetime.date.today().strftime("%b %d, %Y")
+            user_id = genId(fname, lname, location)
+            
+            new_profile = UserProfile(fname=fname, lname=lname, gender=gender, email=email, location=location, biography=biography, upload=filename, profile_creation=profile_date)
+            
+            db.session.add(new_profile)
+            db.session.commit()
+                
+            
+            flash('Profile added!')
+            return redirect(url_for("profiles"))
+            
+        flash_errors(myform)
+    return render_template('profile.html', form=myform)
+    
+
+@app.route('/profiles/', methods=["GET", "POST"])
+def profiles():
+    
+    users = UserProfile.query.all()
+
+    user_list = [{"userid": user.id} for user in users]
+    
+    if request.method == "GET":
+        file_folder = app.config['UPLOAD_FOLDER']
+        return render_template("profiles.html", users=users)
+    
+    elif request.method == "POST":
+        response = make_response(jsonify({"users": user_list}))                                           
+        response.headers['Content-Type'] = 'application/json'            
+        return response
+        
+        
+        
+@app.route('/profile/<userid>', methods=["GET", "POST"])
+def get_profile(userid):
+    
+    user = UserProfile.query.filter_by(id=userid).first()
+    
+    if request.method == "GET":
+        file_folder = app.config['UPLOAD_FOLDER']
+        return render_template("user_profile.html", user=user)
+    
+    elif request.method == "POST":
+        if user is not None:
+            response = make_response(jsonify(userid=user.id, fname=user.fname, lname=user.lname, gender=user.gender, email=user.email, upload=user.upload,  location=user.location, biography=user.biography,
+                    profile_creation=user.profile_creation))
+            response.headers['Content-Type'] = 'application/json'            
+            return response
+        else:
+            flash('No User Found', 'danger')
+            return redirect(url_for("profiles"))
+            
+    
+
+
+def genId(fname, lname, location):
+    uid = []
+    for x in fname:
+        uid.append(str(ord(x)))
+    for x in lname:
+        uid.append(str(ord(x)))
+    for x in location:
+        uid.append(str(ord(x)))
+    
+    random.shuffle(uid)
+    
+    uid = "".join(uid)
+    
+    return uid[:7]
+   
+
+
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    
     if current_user.is_authenticated:
+        # if user is already logged in, just redirect them to our secure page
+        # or some other page like a dashboard
         return render_template('secure_page.html')
+        
     form = LoginForm()
-    if request.method == "POST" and form.validate_on_submit():
-        # change this to actually validate the entire form submission
-        # and not just one field
-        username=form.username.data
-        password=form.password.data
+    if request.method == 'POST' and form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        
         #user = UserProfile.query.filter("user_profiles.username='natkeane'", "user_profiles.password='password'").first()
         user = UserProfile.query.filter_by(username=username).first()
         print(user)
-        flash(user.first_name)
+        flash(user.fname)
         
         if user is not None and check_password_hash(user.password, password ):
             print("logged")
@@ -102,6 +187,14 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'Retry')
     return render_template('home.html')
+
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(u"Error in the %s field - %s" % (
+                getattr(form, field).label.text,
+                error
+            ), 'danger')
 
 
 # user_loader callback. This callback is used to reload the user object from
