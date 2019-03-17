@@ -8,9 +8,10 @@ import os, random, datetime
 from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm, ContactForm
+from app.forms import LoginForm, MyForm
 from app.models import UserProfile
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash
 
 ###
 # Routing for your application.
@@ -32,10 +33,11 @@ def about():
     """Render the website's about page."""
     return render_template('about.html')
     
-    
+ 
+
 @app.route('/profile/', methods=["GET", "POST"])
 def profile():
-    myform= ContactForm()
+    myform= MyForm()
     
     if request.method == 'POST':
         if myform.validate_on_submit():
@@ -47,15 +49,15 @@ def profile():
             biography= myform.biography.data
             upload= myform.upload.data
             
+            filename=secure_filename(upload.filename)
+            upload.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             filename= secure_filename(upload.filename)
-            upload.save(os.path.join(
-                app.config['UPLOAD_FOLDER'], filename
-                ))
+            
             
             profile_date = datetime.date.today().strftime("%b %d, %Y")
             user_id = genId(fname, lname, location)
             
-            new_profile = UserProfile(fname=fname, lname=lname, gender=gender, email=email, location=location, biography=biography, upload=filename, profile_creation=profile_date)
+            new_profile = UserProfile(fname=fame, lame=lname, gender=gender, email=email, location=location, biography=biography, upload=filename, profile_creation=profile_date)
             
             db.session.add(new_profile)
             db.session.commit()
@@ -82,10 +84,12 @@ def profiles():
     elif request.method == "POST":
         response = make_response(jsonify({"users": user_list}))                                           
         response.headers['Content-Type'] = 'application/json'            
-        return response
-        
-        
-        
+        return response 
+ 
+ 
+ 
+ 
+ 
 @app.route('/profile/<userid>', methods=["GET", "POST"])
 def get_profile(userid):
     
@@ -97,15 +101,13 @@ def get_profile(userid):
     
     elif request.method == "POST":
         if user is not None:
-            response = make_response(jsonify(userid=user.id, fname=user.fname, lname=user.lname, gender=user.gender, email=user.email, upload=user.upload,  location=user.location, biography=user.biography,
+            response = make_response(jsonify(userid=user.id, fname=user.fnamename, lame=user.lnamename, gender=user.gender, email=user.email, upload=user.upload,  location=user.location, biography=user.biography,
                     profile_creation=user.profile_creation))
             response.headers['Content-Type'] = 'application/json'            
             return response
         else:
             flash('No User Found', 'danger')
             return redirect(url_for("profiles"))
-            
-    
 
 
 def genId(fname, lname, location):
@@ -126,7 +128,6 @@ def genId(fname, lname, location):
 
 
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     
@@ -136,48 +137,51 @@ def login():
         return render_template('secure_page.html')
         
     form = LoginForm()
-    if request.method == 'POST' and form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        
+    if request.method == "POST" and form.validate_on_submit():
+        # change this to actually validate the entire form submission
+        # and not just one field
+        username=form.username.data
+        password=form.password.data
         #user = UserProfile.query.filter("user_profiles.username='natkeane'", "user_profiles.password='password'").first()
-        user = UserProfile.query.filter_by(username=username).first()
+        user = UserProfile.query.filter_by(username="project1").first()
         print(user)
-        flash(user.fname)
+        flash(user.first_name)
         
         if user is not None and check_password_hash(user.password, password ):
             print("logged")
             login_user(user)
             return redirect(url_for('secure_page'))
-
-
         else:
             flash('Username or Password is incorrect.', 'danger')
             #flash_errors(form)
             return render_template('login.html', form=form)
         flash('Logged in successfully.', 'success')
         return render_template('secure_page.html')
-       
+
+        
+        
     else:
         flash('Username or Password is incorrect.', 'danger')
-        #flash_errors(form)
+        flash_errors(form)
         return render_template('login.html', form=form)
-        #if form.username.data:
+        # change this to actually validate the entire form submission
+        # and not just one field
+    #if form.username.data:
             # Get the username and password values from the form.
+           
+            
 
             # using your model, query database for a user based on the username
-            # and password submitted. Remember you need to compare the password hash.
-            # You will need to import the appropriate function to do so.
-            # Then store the result of that query to a `user` variable so it can be
-            # passed to the login_user() method below.
+            # and password submitted
+            # store the result of that query to a `user` variable so it can be
+            # passed to the login_user() method.
 
             # get user id, load into session
-            #login_user(user)
+           # login_user(user)
 
             # remember to flash a message to the user
-           # return redirect(url_for("home"))  # they should be redirected to a secure-page route instead
-    #return render_template("login.html", form=form)
-
+          #  return redirect(url_for("home"))  # they should be redirected to a secure-page route instead
+   # return render_template("login.html", form=form)
 
 
 @app.route("/logout/")

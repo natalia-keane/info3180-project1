@@ -8,7 +8,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired()])
     
 
-class ContactForm(FlaskForm):
+class MyForm(FlaskForm):
     fname=StringField('First Name',validators=[DataRequired()])
     lname=StringField('Last Name',validators=[DataRequired()])
     gender = SelectField(label='Gender', choices=[("Male", "Male"), ("Female", "Female")])
